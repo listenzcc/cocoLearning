@@ -92,6 +92,24 @@ mat_categories = np.zeros((n_categories, img_max_size[0], img_max_size[1]),
 print(mat_images.shape, mat_categories.shape)
 
 # %%
+
+
+def save_fig(fig, path):
+    '''
+    Save plotly figure as .html and .png format.
+
+    Input:
+    - fig: The plotly figure;
+    - path: The path of the html format.
+    '''
+    fig.write_html(path)
+    fig.write_image('{}.png'.format(path))
+    print('Saved into path: {}'.format(path))
+    # fig.show()
+    pass
+
+
+# %%
 # --------------------------------------------------------------------------------
 # The mat is the count map of every images
 image_id_table = dict()
@@ -121,23 +139,19 @@ print(mat_images.shape, mat_categories.shape)
 max_mat = np.max(mat_images, axis=0)
 
 # %%
-name = 'Occlude Count Heat Map'
-fig = px.imshow(max_mat, title=name)
-path = Path.cwd().joinpath('largeFiles', '{}.html'.format(name))
-fig.write_html(path)
-fig.write_image('{}.png'.format(path))
-fig.show()
+title = 'Occlude Count Heat Map'
+fig = px.imshow(max_mat, title=title)
+path = Path.cwd().joinpath('largeFiles', '{}.html'.format(title))
+save_fig(fig, path)
 
 
 # %%
 
 for j in tqdm(range(n_categories), 'Draw Categories'):
-    name = categories.iloc[j]['full']
-    path = Path.cwd().joinpath('largeFiles', '{}.html'.format(name))
-
-    fig = px.imshow(mat_categories[j], title=name)
-    fig.write_html(path)
-    fig.write_image('{}.png'.format(path))
+    title = categories.iloc[j]['full']
+    fig = px.imshow(mat_categories[j], title=title)
+    path = Path.cwd().joinpath('largeFiles', '{}.html'.format(title))
+    save_fig(fig, path)
     pass
 
 
@@ -154,24 +168,18 @@ std = np.std(mat, axis=0)
 title = 'Std - Categories'
 fig = px.imshow(std, title=title)
 path = Path.cwd().joinpath('largeFiles', '{}.html'.format(title))
-fig.write_html(path)
-fig.write_image('{}.png'.format(path))
-fig.show()
+save_fig(fig, path)
 
 title = 'Mean - Categories'
 fig = px.imshow(mean, title=title)
 path = Path.cwd().joinpath('largeFiles', '{}.html'.format(title))
-fig.write_html(path)
-fig.write_image('{}.png'.format(path))
-fig.show()
+save_fig(fig, path)
 
 # %%
 title = 'Area - BoxGraph'
-path = Path.cwd().joinpath('largeFiles', '{}.html'.format(title))
 fig = px.box(annotations, title=title, y='area',
              x='category_id', log_y=True, points=False)
-fig.write_html(path)
-fig.write_image('{}.png'.format(path))
-fig.show()
+path = Path.cwd().joinpath('largeFiles', '{}.html'.format(title))
+save_fig(fig, path)
 
 # %%
