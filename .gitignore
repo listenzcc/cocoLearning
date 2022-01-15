@@ -1,2 +1,3 @@
 annotations
 largeFiles/*.html
+largeFiles/*.npy

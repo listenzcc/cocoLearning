@@ -19,7 +19,7 @@ def save_fig(fig, path):
     - fig: The plotly figure;
     - path: The path of the html format.
     '''
-    fig.write_html(path)
+    fig.write_html('{}.html'.format(path))
     fig.write_image('{}.png'.format(path))
     print('Saved into path: {}'.format(path))
     fig.show()
@@ -48,6 +48,11 @@ for j in tqdm(range(len(annotations)), 'Iter Records'):
 MAT.shape
 
 # %%
+select = np.sum(MAT, axis=0) > 1
+MAT = MAT[:, select]
+MAT.shape
+
+# %%
 
 forward_mat = np.zeros((n_categories, n_categories), dtype=np.float64)
 
@@ -62,20 +67,23 @@ for cat_idx in tqdm(range(n_categories), 'Fill cov_mat'):
 np.fill_diagonal(forward_mat, 0)
 
 # %%
+Path.mkdir(Path.cwd().joinpath('largeFiles', 'prob_analysis'), exist_ok=True)
+
+# %%
 title = 'Base prob.'
 df = pd.DataFrame(prob_vec, columns=['prob'])
 df['name'] = categories['name'].to_list()
 df['super'] = categories['supercategory'].to_list()
 fig = px.bar(df, title=title, y='name', x='prob',
              log_x=True, color='super', height=600)
-path = Path.cwd().joinpath('largeFiles', '{}.html'.format(title))
+path = Path.cwd().joinpath('largeFiles', 'prob_analysis', title)
 save_fig(fig, path)
 
 # %%
 title = 'Forward prob.'
 fig = px.imshow(forward_mat, title=title, height=600, width=600,
                 x=categories['name'], y=categories['full'])
-path = Path.cwd().joinpath('largeFiles', '{}.html'.format(title))
+path = Path.cwd().joinpath('largeFiles', 'prob_analysis', title)
 save_fig(fig, path)
 
 # %%
