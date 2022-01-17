@@ -155,7 +155,7 @@ title = 'TSNE space (labelCount)'
 fig = px.scatter_3d(df, title=title, x='x', y='y', z='z',
                     width=600, height=600, color='labelCount')
 
-fig.update_traces(marker=dict(size=2,
+fig.update_traces(marker=dict(size=1,
                               line=dict(width=0,
                                         color='white')),
                   selector=dict(mode='markers'))
@@ -171,7 +171,7 @@ title = 'TSNE space (labelMaxArea)'
 fig = px.scatter_3d(df, title=title, x='x', y='y', z='z',
                     width=600, height=600, color='labelMaxArea')
 
-fig.update_traces(marker=dict(size=2,
+fig.update_traces(marker=dict(size=1,
                               line=dict(width=0,
                                         color='white')),
                   selector=dict(mode='markers'))

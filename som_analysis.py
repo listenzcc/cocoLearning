@@ -32,13 +32,13 @@ def save_fig(fig, path):
     pass
 
 
-save_path = Path.cwd().joinpath('largeFiles', 'category_space_analysis')
+save_path = Path.cwd().joinpath('largeFiles', 'som_analysis')
 Path.mkdir(save_path, exist_ok=True)
 
 # %%
 # Build the MAT as zero matrix,
 # it is the hot-coding of the categories of the images
-MAT = np.zeros((n_categories, n_images), dtype=np.uint8)
+MAT = np.zeros((n_categories, n_images), dtype=np.float64)
 MATArea = np.zeros((n_categories, n_images), dtype=np.float64)
 
 # %%
@@ -63,6 +63,7 @@ MAT.shape, MATArea.shape
 # %%
 select = np.sum(MAT, axis=0) > 1
 mat = MAT[:, select]
+mat_area = MATArea[:, select]
 
 label_idx_max = np.argmax(MATArea[:, select], axis=0)
 labels_max_area = [categories.iloc[int(e)]['supercategory']
@@ -73,7 +74,7 @@ count_categories = np.sum(mat, axis=0, dtype=np.float64)
 mat.shape, count_categories.shape, len(labels_max_area)
 
 # %%
-som = MiniSom(100, 100, 80, sigma=0.8, learning_rate=0.5)
+som = MiniSom(50, 50, 80, sigma=0.8, learning_rate=0.5)
 som.train(mat.transpose(), 1000, verbose=True)
 
 
@@ -88,12 +89,32 @@ df['label'] = labels_max_area
 df
 
 # %%
-fig = px.scatter(df, x='x', y='y', color='label')
-fig.show()
+title = 'SOM project (Label by max area)'
+fig = px.scatter_3d(df, title=title, x='x', y='y', z='count', color='label')
+
+fig.update_traces(marker=dict(size=2,
+                              line=dict(width=0,
+                                        color='white')),
+                  selector=dict(mode='markers'))
+
+fig.update_layout(dict(scene={'aspectmode': 'data'}, width=600, height=600))
+
+path = save_path.joinpath(title)
+save_fig(fig, path)
 
 # %%
-fig = px.scatter(df, x='x', y='y', color='count')
-fig.show()
+title = 'SOM project (Count of categories)'
+fig = px.scatter_3d(df, title=title, x='x', y='y', z='count', color='count')
+
+fig.update_traces(marker=dict(size=2,
+                              line=dict(width=0,
+                                        color='white')),
+                  selector=dict(mode='markers'))
+
+fig.update_layout(dict(scene={'aspectmode': 'data'}, width=600, height=600))
+
+path = save_path.joinpath(title)
+save_fig(fig, path)
 
 
 # %%
